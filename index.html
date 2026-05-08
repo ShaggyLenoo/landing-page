@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABC Robotics - Precision Industrial Automation</title>
+  <meta name="description" content="ABC Robotics delivers AI-powered industrial automation and precision robotic systems for smart manufacturing." />
+  <link rel="stylesheet" href="styles.css" />
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ── Scroll Reveal Hook ──
+   Uses IntersectionObserver to add 'visible' class when elements enter viewport */
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+}
+
+/* ── Animated Counter Hook ──
+   Counts up to a target number when the element scrolls into view */
+function useCounter(target, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      let current = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { setCount(target); clearInterval(timer); }
+        else setCount(Math.floor(current));
+      }, 16);
+    }, { threshold: 0.5 });
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target, duration]);
+  return [count, ref];
+}
+
+/* ── Logo Component ── */
+function Logo() {
+  return (
+    <a href="#home" className="logo-area">
+      <div className="logo-text">
+        ABC Robotics
+      </div>
+    </a>
+  );
+}
+
+/* ── Navbar ── */
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const navItems = ['Home', 'Robots', 'Features', 'Industries', 'About'];
+
+  return (
+    <>
+      <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        <Logo />
+        <ul className="nav-links">
+          {navItems.map(item => (
+            <li key={item}><a href={`#${item.toLowerCase()}`}>{item}</a></li>
+          ))}
+        </ul>
+        <button className="nav-cta" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+          Get Demo
+        </button>
+        <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+          <span /><span /><span />
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        {navItems.map(item => (
+          <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)}>{item}</a>
+        ))}
+        <a href="#contact" onClick={() => setMenuOpen(false)}>Get Demo</a>
+      </div>
+    </>
+  );
+}
+
+/* ── Industrial 6-DOF Robot Arm SVG ── */
+function RobotIllustration() {
+  return (
+    <svg width="200" height="210" viewBox="0 0 200 215" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      {/* ─ Base Platform ─ */}
+      <ellipse cx="95" cy="205" rx="52" ry="11" fill="rgba(255,136,0,0.08)" stroke="rgba(255,136,0,0.45)" strokeWidth="1.5"/>
+      <ellipse cx="95" cy="200" rx="40" ry="8"  fill="rgba(255,136,0,0.04)" stroke="rgba(255,136,0,0.3)"  strokeWidth="1"/>
+      <rect x="82" y="172" width="26" height="32" rx="3" fill="rgba(255,136,0,0.06)" stroke="rgba(255,136,0,0.4)" strokeWidth="1.5"/>
+      <line x1="82" y1="179" x2="108" y2="179" stroke="rgba(255,136,0,0.2)" strokeWidth="0.5"/>
+      <line x1="82" y1="185" x2="108" y2="185" stroke="rgba(255,136,0,0.2)" strokeWidth="0.5"/>
+      <line x1="82" y1="191" x2="108" y2="191" stroke="rgba(255,136,0,0.2)" strokeWidth="0.5"/>
+
+      {/* ─ Waist Joint (J0) ─ */}
+      <circle cx="95" cy="170" r="15" fill="rgba(255,136,0,0.1)" stroke="rgba(255,136,0,0.55)" strokeWidth="1.5"/>
+      <circle cx="95" cy="170" r="7"  fill="rgba(255,136,0,0.18)" stroke="rgba(255,136,0,0.8)"  strokeWidth="1"/>
+      <circle cx="95" cy="170" r="2.5" fill="#FF8800"/>
+      <circle cx="95" cy="170" r="15" fill="none" stroke="rgba(255,136,0,0.25)" strokeDasharray="4 3" strokeWidth="1">
+        <animateTransform attributeName="transform" type="rotate" from="0 95 170" to="360 95 170" dur="5s" repeatCount="indefinite"/>
+      </circle>
+
+      {/* ─ Upper Arm (Link 1) ─ */}
+      <line x1="95" y1="155" x2="95" y2="98" stroke="rgba(255,136,0,0.15)" strokeWidth="14" strokeLinecap="round"/>
+      <line x1="95" y1="155" x2="95" y2="98" stroke="rgba(255,136,0,0.65)" strokeWidth="9"  strokeLinecap="round"/>
+      <line x1="89" y1="148" x2="89" y2="105" stroke="rgba(255,136,0,0.18)" strokeWidth="0.5"/>
+      <line x1="101" y1="148" x2="101" y2="105" stroke="rgba(255,136,0,0.18)" strokeWidth="0.5"/>
+      <line x1="88" y1="130" x2="102" y2="130" stroke="rgba(255,136,0,0.3)" strokeWidth="0.8" strokeDasharray="2 3"/>
+
+      {/* ─ Shoulder Joint (J1) ─ */}
+      <circle cx="95" cy="96" r="14" fill="rgba(255,136,0,0.12)" stroke="rgba(255,136,0,0.6)" strokeWidth="2"/>
+      <circle cx="95" cy="96" r="6"  fill="rgba(255,136,0,0.2)"  stroke="rgba(255,136,0,0.85)" strokeWidth="1"/>
+      <circle cx="95" cy="96" r="2"  fill="#FF8800" opacity="0.95"/>
+
+      {/* ─ Forearm (Link 2) ─ */}
+      <line x1="95" y1="82" x2="145" y2="54" stroke="rgba(255,136,0,0.14)" strokeWidth="13" strokeLinecap="round"/>
+      <line x1="95" y1="82" x2="145" y2="54" stroke="rgba(255,136,0,0.6)"  strokeWidth="8"  strokeLinecap="round"/>
+      {/* circuit trace on forearm */}
+      <line x1="105" y1="75" x2="135" y2="60" stroke="rgba(255,136,0,0.25)" strokeWidth="0.5" strokeDasharray="3 4"/>
+
+      {/* ─ Elbow Joint (J2) ─ */}
+      <circle cx="145" cy="52" r="12" fill="rgba(255,136,0,0.1)" stroke="rgba(255,136,0,0.58)" strokeWidth="1.5"/>
+      <circle cx="145" cy="52" r="5.5" fill="rgba(255,136,0,0.2)" stroke="rgba(255,136,0,0.8)" strokeWidth="1"/>
+      <circle cx="145" cy="52" r="2" fill="#FF8800">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite"/>
+      </circle>
+
+      {/* ─ Wrist Link (Link 3) ─ */}
+      <line x1="145" y1="40" x2="162" y2="20" stroke="rgba(255,136,0,0.12)" strokeWidth="11" strokeLinecap="round"/>
+      <line x1="145" y1="40" x2="162" y2="20" stroke="rgba(255,136,0,0.55)" strokeWidth="7"  strokeLinecap="round"/>
+
+      {/* ─ Wrist Joint (J3) ─ */}
+      <circle cx="162" cy="18" r="10" fill="rgba(255,136,0,0.1)" stroke="rgba(255,136,0,0.55)" strokeWidth="1.5"/>
+      <circle cx="162" cy="18" r="4.5" fill="rgba(255,136,0,0.18)" stroke="rgba(255,136,0,0.8)" strokeWidth="1"/>
+      <circle cx="162" cy="18" r="1.5" fill="#FF8800">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="1.1s" repeatCount="indefinite"/>
+      </circle>
+
+      {/* ─ End Effector / Gripper ─ */}
+      <line x1="162" y1="8"  x2="162" y2="2"  stroke="rgba(255,136,0,0.55)" strokeWidth="5" strokeLinecap="round"/>
+      <line x1="162" y1="4"  x2="153" y2="-5" stroke="rgba(255,136,0,0.7)"  strokeWidth="3" strokeLinecap="round"/>
+      <line x1="162" y1="4"  x2="171" y2="-5" stroke="rgba(255,136,0,0.7)"  strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="153" cy="-5" r="2" fill="#FF8800" opacity="0.8">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="0.9s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="171" cy="-5" r="2" fill="#FF8800" opacity="0.8">
+        <animate attributeName="opacity" values="1;0.5;1" dur="0.9s" repeatCount="indefinite"/>
+      </circle>
+
+      {/* ─ Axis / crosshair indicators on joints ─ */}
+      <line x1="80" y1="96" x2="110" y2="96" stroke="rgba(255,136,0,0.2)" strokeWidth="0.5"/>
+      <line x1="95" y1="81" x2="95" y2="111" stroke="rgba(255,136,0,0.2)" strokeWidth="0.5"/>
+      <line x1="131" y1="52" x2="159" y2="52" stroke="rgba(255,136,0,0.15)" strokeWidth="0.5"/>
+      <line x1="145" y1="38" x2="145" y2="66" stroke="rgba(255,136,0,0.15)" strokeWidth="0.5"/>
+
+      {/* ─ Sweep scan line ─ */}
+      <line x1="0" y1="1" x2="200" y2="1" stroke="rgba(255,136,0,0.25)" strokeWidth="1">
+        <animate attributeName="y1" values="0;215;0" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="0;215;0" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.6;0" dur="4s" repeatCount="indefinite"/>
+      </line>
+    </svg>
+  );
+}
+
+/* ── Hero Section ── */
+function Hero() {
+  return (
+    <section id="home" className="hero">
+      <div className="hero-content">
+
+
+        <h1 className="hero-title">
+          <span className="line1">Engineering</span>
+          <span className="line2">Tomorrow's Factory</span>
+          <span className="line3">Precision · Automation · Intelligence</span>
+        </h1>
+
+        <p className="hero-sub">
+          ABC Robotics delivers AI-driven robotic systems engineered for the demands of modern industrial manufacturing - faster, smarter, and more precise.
+        </p>
+
+        <div className="hero-btns">
+          <button className="btn-primary" onClick={() => document.getElementById('robots').scrollIntoView({ behavior: 'smooth' })}>
+            Explore Robots →
+          </button>
+          <button className="btn-secondary" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
+            Schedule Demo
+          </button>
+        </div>
+
+        <div className="hero-stats">
+          {[['500+', 'Facilities'], ['99.9%', 'Precision'], ['24/7', 'Monitoring']].map(([val, label]) => (
+            <div key={label}>
+              <span className="hero-stat-val">{val}</span>
+              <span className="hero-stat-label">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3D Placeholder - Spline-ready, currently showing animated industrial arm */}
+      <div className="hero-3d">
+        <div className="robot-stage">
+
+          {/* HUD corner brackets */}
+          <div className="hud-corner tl" />
+          <div className="hud-corner tr" />
+          <div className="hud-corner bl" />
+          <div className="hud-corner br" />
+
+          {/* Orbital rings */}
+          <div className="r-ring r-ring-1" />
+          <div className="r-ring r-ring-2" />
+          <div className="r-ring r-ring-3" />
+
+          {/* Glow + radar sweep */}
+          <div className="r-glow" />
+          <div className="r-scan" />
+
+          {/* Core display with grid background */}
+          <div className="r-core">
+            <div className="robot-wrap">
+              <RobotIllustration />
+            </div>
+          </div>
+
+          {/* Floating HUD data labels */}
+          <div className="r-data r-d1">TORQUE: 87.3 Nm</div>
+          <div className="r-data r-d2">RPM: 2,340</div>
+          <div className="r-data r-d3">TEMP: 42°C</div>
+          <div className="r-data r-d4">AXIS: 6-DOF</div>
+          <div className="r-data r-d5">±0.01mm</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Tech Ticker Strip ── */
+function Ticker() {
+  const items = [
+    '6-DOF Precision', '±0.01mm Accuracy', 'AI Motion Planning', 'OPC-UA Compatible',
+    'IP69K Rated', '24/7 Uptime', '200 picks/min', 'Edge AI Processing',
+    'ISO 10218 Certified', 'Sub-ms Latency', 'Digital Twin Ready', 'NeuroOS Powered',
+    '6-DOF Precision', '±0.01mm Accuracy', 'AI Motion Planning', 'OPC-UA Compatible',
+    'IP69K Rated', '24/7 Uptime', '200 picks/min', 'Edge AI Processing',
+    'ISO 10218 Certified', 'Sub-ms Latency', 'Digital Twin Ready', 'NeuroOS Powered',
+  ];
+  return (
+    <div className="ticker-strip">
+      <div className="ticker-track">
+        {items.map((item, i) => (
+          <span key={i} className="ticker-item">
+            <span className="dot" />
+            <strong>{item}</strong>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ── Robot Showcase ── */
+function Showcase() {
+  const robots = [
+    {
+      icon: '🦾', tag: 'Collaborative Robot', title: 'ABC Cobot C9',
+      img: 'https://plrobotics.in/ASSETS/COBOT/cobot_4.jpg',
+      desc: 'Intelligent cobots built to work alongside humans with advanced force sensing and AI-assisted path planning for safe, efficient collaboration.',
+      specs: ['6-Axis', '10kg Payload', '±0.01mm', 'Safe-by-Design'],
+    },
+    {
+      icon: '⚙️', tag: 'High-Speed SCARA', title: 'ABC SCARA S3',
+      img: 'https://plrobotics.in/ASSETS/SCARA/scara_1.jpg',
+      desc: 'Ultra-fast SCARA arms engineered for precision assembly, pick-and-place, and micro-insertion tasks in electronics and pharma industries.',
+      specs: ['4-Axis', '800mm Reach', '0.005mm', '120 cyc/min'],
+    },
+    {
+      icon: '🔺', tag: 'Parallel Robot', title: 'ABC Delta D7',
+      img: 'https://plrobotics.in/ASSETS/SCARA/scra_4.jpg',
+      desc: 'High-speed delta robots with AI vision guidance, optimized for food packaging, sorting, and light-payload operations at extreme speeds.',
+      specs: ['3-Axis', 'IP69K Rated', '200 picks/min', 'Vision AI'],
+    },
+  ];
+
+  return (
+    <section id="robots" className="showcase">
+      <div className="label reveal">Robot Lineup</div>
+      <h2 className="section-title reveal">Built for Peak Performance</h2>
+      <p className="section-sub reveal">Three distinct robot families, each precision-engineered for specific industrial environments and use cases.</p>
+
+      <div className="cards-grid">
+        {robots.map((robot, i) => (
+          <div key={robot.title} className={`robot-card reveal d${i + 1}`}>
+            {robot.img && <img className="card-img" src={robot.img} alt={robot.title} loading="lazy" />}
+            <div className="card-tag">{robot.tag}</div>
+            <h3 className="card-title">{robot.title}</h3>
+            <p className="card-desc">{robot.desc}</p>
+            <div className="card-specs">
+              {robot.specs.map(s => <span key={s} className="spec">{s}</span>)}
+            </div>
+            <div className="glow-bar" />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── Features / Capabilities ── */
+function Features() {
+  const features = [
+    { icon: '🧠', title: 'AI Automation',         desc: 'Deep learning models that adapt to production changes in real time.' },
+    { icon: '🏭', title: 'Smart Manufacturing',    desc: 'Connected factory systems with edge AI and digital twin integration.' },
+    { icon: '📡', title: 'Real-Time Monitoring',   desc: 'Live dashboards with sub-millisecond sensor data streaming.' },
+    { icon: '🔮', title: 'Predictive Maintenance', desc: 'ML-based anomaly detection prevents downtime before it occurs.' },
+    { icon: '🎯', title: 'Precision Engineering',  desc: 'Sub-micron accuracy across all robotic motion profiles.' },
+    { icon: '⚡', title: 'High-Speed Robotics',    desc: 'Cycle times optimized with AI motion planning.' },
+    { icon: '☁️', title: 'Cloud Integration',      desc: 'Secure OTA updates and analytics via ABC CloudOS.' },
+    { icon: '📊', title: 'Data Analytics',         desc: 'Operational intelligence with actionable production insights.' },
+  ];
+
+  return (
+    <section id="features" className="features">
+      <div className="label reveal">Capabilities</div>
+      <h2 className="section-title reveal">AI-Powered Factory Intelligence</h2>
+      <p className="section-sub reveal">Comprehensive automation capabilities covering every layer of your manufacturing operation.</p>
+
+      <div className="feat-grid">
+        {features.map((f, i) => (
+          <div key={f.title} className={`feat-card reveal d${(i % 3) + 1}`}>
+            <span className="feat-icon">{f.icon}</span>
+            <div className="feat-title">{f.title}</div>
+            <div className="feat-desc">{f.desc}</div>
+            <div className="line" />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── Big Image ── */
+function BigImage() {
+  return (
+    <section className="big-image-section">
+      <div className="big-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1535378273068-9bb67d5beacd?q=80&w=2500&auto=format&fit=crop" alt="Industrial Robotics Facility" loading="lazy" />
+        <div className="big-image-overlay">
+          <h2 className="reveal">Precision at Scale</h2>
+          <p className="reveal">Real-world industrial automation powering modern manufacturing</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Industries ── */
+function Industries() {
+  const industries = [
+    { num: '01', icon: '🚗', name: 'Automotive',     desc: 'Precision welding, assembly, and paint automation for OEM production lines.' },
+    { num: '02', icon: '💾', name: 'Electronics',    desc: 'Ultra-fine SMT placement and micro-soldering at scale.' },
+    { num: '03', icon: '📦', name: 'Warehousing',    desc: 'Autonomous mobile robots for efficient goods-to-person fulfillment.' },
+    { num: '04', icon: '⚕️', name: 'Healthcare',     desc: 'Sterile robotic systems for pharma and surgical device manufacturing.' },
+    { num: '05', icon: '⚙️', name: 'Manufacturing',  desc: 'End-to-end smart factory transformation across all sectors.' },
+  ];
+
+  return (
+    <section id="industries" className="industries">
+      <div className="label reveal">Sectors</div>
+      <h2 className="section-title reveal">Industries We Transform</h2>
+      <p className="section-sub reveal">Deployed across five major industrial sectors with proven ROI and reduced downtime.</p>
+
+      <div className="ind-list">
+        {industries.map((item, i) => (
+          <div key={item.name} className={`ind-row reveal d${(i % 3) + 1}`}>
+            <span className="ind-num">{item.num}</span>
+            <span className="ind-icon">{item.icon}</span>
+            <span className="ind-name">{item.name}</span>
+            <span className="ind-desc">{item.desc}</span>
+            <span className="ind-arr">→</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── Animated Stat Number ── */
+function StatNum({ target, suffix }) {
+  const [count, ref] = useCounter(target);
+  return <span ref={ref} className="stat-num">{count.toLocaleString()}{suffix}</span>;
+}
+
+/* ── Statistics Section ── */
+function Stats() {
+  const stats = [
+    { target: 500,     suffix: '+',   label: 'Automated Facilities' },
+    { target: 99,      suffix: '.9%', label: 'Precision Rate'       },
+    { target: 24,      suffix: '/7',  label: 'Live Monitoring'      },
+    { target: 40,      suffix: '%',   label: 'Efficiency Gain'      },
+    { target: 1000, suffix: 'K+',   label: 'Operations / Day'    },
+  ];
+
+  return (
+    <section className="stats">
+      <div className="stats-grid">
+        {stats.map(s => (
+          <div key={s.label} className="stat-box reveal">
+            <StatNum target={s.target} suffix={s.suffix} />
+            <span className="stat-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── Innovation Timeline ── */
+function Timeline() {
+  const phases = [
+    { phase: 'Phase 01', title: 'AI Integration Core',     text: 'ABC NeuroOS deployed across all robot lines - enabling real-time adaptive intelligence with zero-latency edge processing.',   tag: 'Deep Learning · Neural Networks' },
+    { phase: 'Phase 02', title: 'Robotics Engineering',    text: 'Advanced kinematic models and servo fusion deliver sub-0.01mm repeatability across all six degrees of freedom.',                tag: 'Motion Control · Kinematics'     },
+    { phase: 'Phase 03', title: 'Industrial Automation',   text: 'Full-floor automation with MES/ERP integration and real-time production orchestration via ABC Control Suite.',                  tag: 'MES · SCADA · OPC-UA'           },
+    { phase: 'Phase 04', title: 'Smart Factory Systems',   text: 'Digital twin environments that simulate and optimize factory throughput before physical deployment begins.',                      tag: 'Digital Twin · IIoT · Edge AI'  },
+    { phase: 'Phase 05', title: 'ML Optimization',         text: 'Continuous learning loops that automatically reduce cycle times and improve quality yields month over month.',                   tag: 'Reinforcement Learning · AutoML' },
+  ];
+
+  return (
+    <section className="timeline">
+      <div className="label reveal">Technology Roadmap</div>
+      <h2 className="section-title reveal">Innovation Architecture</h2>
+      <p className="section-sub reveal">A structured approach from pilot deployment to full smart factory transformation.</p>
+
+      <div className="tl-track">
+        {phases.map((p, i) => (
+          <div key={p.title} className={`tl-item reveal d${(i % 3) + 1}`}>
+            <div className="tl-phase">{p.phase}</div>
+            <div className="tl-heading">{p.title}</div>
+            <div className="tl-text">{p.text}</div>
+            <div className="tl-tag">{p.tag}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── Call To Action ── */
+function CTA() {
+  return (
+    <section id="contact" className="cta">
+      <div className="cta-glow" />
+      <div className="label reveal" style={{ justifyContent: 'center' }}>Take Action</div>
+      <h2 className="section-title reveal" style={{ textAlign: 'center' }}>
+        Ready to Automate Your Future?
+      </h2>
+      <p className="section-sub reveal" style={{ textAlign: 'center', margin: '0 auto 2.5rem' }}>
+        Join 500+ facilities already running on ABC Robotics systems. Our engineering team will design a custom automation roadmap tailored to your operation.
+      </p>
+      <div className="cta-btns reveal">
+        <button className="btn-primary">Explore Solutions →</button>
+        <button className="btn-secondary">Schedule Consultation</button>
+        <button className="btn-secondary">Contact Sales</button>
+      </div>
+    </section>
+  );
+}
+
+/* ── Footer ── */
+function Footer() {
+  return (
+    <footer className="footer">
+      <div className="footer-grid">
+        <div className="footer-brand">
+          <Logo />
+          <p className="footer-desc">
+            Precision-engineered robotic systems powering the next industrial revolution - smarter, faster, and more reliable.
+          </p>
+
+        </div>
+        <div className="footer-col">
+          <h4>Products</h4>
+          <ul>
+            {['ABC Cobot C9', 'ABC SCARA S3', 'ABC Delta D7', 'NeuroOS', 'CloudOS'].map(l => (
+              <li key={l}><a href="#">{l}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div className="footer-col">
+          <h4>Company</h4>
+          <ul>
+            {['About ABC Robotics', 'Careers', 'Press', 'Blog', 'Partners'].map(l => (
+              <li key={l}><a href="#">{l}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div className="footer-col">
+          <h4>Support</h4>
+          <ul>
+            {['Documentation', 'API Docs', 'System Status', 'Security', 'Contact'].map(l => (
+              <li key={l}><a href="#">{l}</a></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <span className="footer-copy">© 2026 ABC Robotics. All rights reserved.</span>
+        <span className="footer-copy" style={{ color: 'rgba(255,136,0,0.4)', fontFamily: 'Inter,sans-serif', fontSize: '0.62rem', letterSpacing: '2px' }}>
+          PRECISION · AUTOMATION · EXCELLENCE
+        </span>
+      </div>
+    </footer>
+  );
+}
+
+/* ── Root App ── */
+function App() {
+  useScrollReveal(); // initialise scroll animations once on mount
+  return (
+    <>
+      <Navbar />
+      <Hero />
+      <Showcase />
+      <Ticker />
+      <Features />
+      <BigImage />
+      <Industries />
+      <Stats />
+      <Timeline />
+      <CTA />
+      <Footer />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
