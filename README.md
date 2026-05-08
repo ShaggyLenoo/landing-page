@@ -12,9 +12,9 @@ A modern, high-performance static landing page for ABC Robotics. Designed to sho
 - **Dynamic Interaction:** Implemented subtle hover states, micro-animations, and a continuous glowing 3D SVG animation to make the interface feel responsive and alive without overwhelming the user.
 
 ## 🛠️ Technologies Used
-- **HTML5 & CSS3:** Semantic structure and pure CSS for layout and all complex animations.
-- **React (via CDN) & Babel:** Utilized a component-based architecture directly in the browser. This allows for modular, maintainable code (separating the Hero, Features, Showcase, etc.) without the overhead of build tools like Webpack or Vite.
-- **Vanilla JavaScript:** For scroll-reveals and lightweight state management (like the mobile hamburger menu).
+- **HTML & CSS:** Used to build the core structure of the website and design how it looks. All the complex visual effects, like the spinning rings and glowing robot, are made entirely using standard CSS animations.
+- **React:** Used to break the website down into smaller, reusable building blocks (like the Hero section, the Timeline, and the Features list). This makes the code organized, easy to read, and simple to update.
+- **JavaScript:** Used to add interactive features to the site, such as making elements smoothly appear when you scroll down the page, and making the mobile menu work.
 
 ## 💡 Key Features & Decisions
 - **Zero-Build Architecture:** Deliberately chose a serverless, build-free architecture. The entire site runs statically, ensuring lightning-fast load times, extreme portability, and easy local development.
