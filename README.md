@@ -1,8 +1,14 @@
 # ABC Robotics Landing Page
 
-## How to Run Locally
+A modern, high-performance static landing page for ABC Robotics. Designed to showcase enterprise-grade industrial automation and robotics solutions with a professional, grounded aesthetic.
 
-Since this is a lightweight static website, there are two easy ways to run it locally:
+## 🚀 Live Demo
+
+**[View the Live Site on Vercel](https://your-vercel-deployment-link.vercel.app)** *(Note: Update this link with your actual Vercel URL)*
+
+## 💻 How to Run Locally
+
+Since this is a lightweight static website without complex build tools, it is extremely easy to run locally:
 
 **Option 1: Open in Browser (Easiest)**
 1. Navigate to the project folder.
