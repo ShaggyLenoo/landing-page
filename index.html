@@ -290,22 +290,22 @@ function Ticker() {
 function Showcase() {
   const robots = [
     {
-      icon: '🦾', tag: 'Collaborative Robot', title: 'ABC Cobot C9',
+      icon: '🦾', tag: 'Collaborative Robot', title: 'ABC Cobot CO3',
       img: 'https://plrobotics.in/ASSETS/COBOT/cobot_4.jpg',
       desc: 'Intelligent cobots built to work alongside humans with advanced force sensing and AI-assisted path planning for safe, efficient collaboration.',
-      specs: ['6-Axis', '10kg Payload', '±0.01mm', 'Safe-by-Design'],
+      specs: ['6-Axis', '3kg Payload', '550mm Reach', 'Safe-by-Design'],
     },
     {
-      icon: '⚙️', tag: 'High-Speed SCARA', title: 'ABC SCARA S3',
+      icon: '⚙️', tag: 'High-Speed SCARA', title: 'ABC SCARA SR5',
       img: 'https://plrobotics.in/ASSETS/SCARA/scara_1.jpg',
       desc: 'Ultra-fast SCARA arms engineered for precision assembly, pick-and-place, and micro-insertion tasks in electronics and pharma industries.',
-      specs: ['4-Axis', '800mm Reach', '0.005mm', '120 cyc/min'],
+      specs: ['4-Axis', '5kg Payload', '500mm Reach', '120 cyc/min'],
     },
     {
-      icon: '🔺', tag: 'Parallel Robot', title: 'ABC Delta D7',
+      icon: '🏭', tag: 'SMT System', title: 'DN2535',
       img: 'https://plrobotics.in/ASSETS/SCARA/scra_4.jpg',
-      desc: 'High-speed delta robots with AI vision guidance, optimized for food packaging, sorting, and light-payload operations at extreme speeds.',
-      specs: ['3-Axis', 'IP69K Rated', '200 picks/min', 'Vision AI'],
+      desc: 'Advanced SMT pick-and-place machine equipped with advanced vision, supporting 56 reel slots and a maximum board area of 250mm x 350mm.',
+      specs: ['Advanced Vision', 'High CPH', '56 Reel Slots', 'Max Area 250x350mm'],
     },
   ];
 
@@ -508,7 +508,7 @@ function Footer() {
         <div className="footer-col">
           <h4>Products</h4>
           <ul>
-            {['ABC Cobot C9', 'ABC SCARA S3', 'ABC Delta D7', 'NeuroOS', 'CloudOS'].map(l => (
+            {['ABC Cobot CO3', 'ABC SCARA SR5', 'DN2535', 'NeuroOS', 'CloudOS'].map(l => (
               <li key={l}><a href="#">{l}</a></li>
             ))}
           </ul>
