@@ -74,7 +74,8 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const navItems = ['Home', 'Robots', 'Features', 'Industries', 'About'];
+  const navItems = ['Home', 'Robots', 'Features', 'Customer Reviews', 'Industries', 'About'];
+  const navAnchor = (item) => item.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <>
@@ -82,7 +83,7 @@ function Navbar() {
         <Logo />
         <ul className="nav-links">
           {navItems.map(item => (
-            <li key={item}><a href={`#${item.toLowerCase()}`}>{item}</a></li>
+            <li key={item}><a href={`#${navAnchor(item)}`}>{item}</a></li>
           ))}
         </ul>
         <button className="nav-cta" onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}>
@@ -96,7 +97,7 @@ function Navbar() {
       {/* Mobile menu */}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
         {navItems.map(item => (
-          <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMenuOpen(false)}>{item}</a>
+          <a key={item} href={`#${navAnchor(item)}`} onClick={() => setMenuOpen(false)}>{item}</a>
         ))}
         <a href="#contact" onClick={() => setMenuOpen(false)}>Get Demo</a>
       </div>
@@ -366,6 +367,59 @@ function Features() {
   );
 }
 
+/* ── Customer Reviews ── */
+function CustomerReviews() {
+  const reviews = [
+    {
+      name: 'Arjun Mehta',
+      role: 'Production Head, Aster Components',
+      photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=900&auto=format&fit=crop',
+      rating: 5,
+      feedback: 'The DN2535 drastically reduced our prototyping time. Setup was smooth, and we achieved consistent placement accuracy from day one.'
+    },
+    {
+      name: 'Neha Kulkarni',
+      role: 'Operations Lead, Trion Electronics',
+      photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=900&auto=format&fit=crop',
+      rating: 5,
+      feedback: 'What impressed us most was repeatability. The SR5 line improved throughput while keeping quality stable across long production shifts.'
+    },
+    {
+      name: 'Rahul Deshpande',
+      role: 'Plant Manager, NexFab Systems',
+      photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=900&auto=format&fit=crop',
+      rating: 4,
+      feedback: 'The cobot deployment helped our team automate repetitive work safely. Support and training from ABC Robotics were practical and fast.'
+    }
+  ];
+
+  const stars = (count) => '★'.repeat(count) + '☆'.repeat(5 - count);
+
+  return (
+    <section id="customer-reviews" className="reviews">
+      <div className="label reveal">Customer Reviews</div>
+      <h2 className="section-title reveal">Trusted by Manufacturing Teams</h2>
+      <p className="section-sub reveal">Real feedback from customers using ABC Robotics systems in production environments.</p>
+
+      <div className="reviews-grid">
+        {reviews.map((review, i) => (
+          <article key={review.name} className={`review-card reveal d${(i % 3) + 1}`}>
+            <img className="review-photo" src={review.photo} alt={review.name} loading="lazy" />
+            <div className="review-body">
+              <div className="review-rating" aria-label={`${review.rating} out of 5 stars`}>
+                {stars(review.rating)}
+              </div>
+              <p className="review-text">"{review.feedback}"</p>
+              <h3 className="review-name">{review.name}</h3>
+              <p className="review-role">{review.role}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ── Big Image ── */
 function BigImage() {
   return (
@@ -551,6 +605,7 @@ function App() {
       <Showcase />
       <Ticker />
       <Features />
+      <CustomerReviews />
       <BigImage />
       <Industries />
       <Stats />
