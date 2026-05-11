@@ -327,12 +327,28 @@ section { padding: 5rem 3rem; }
 .reviews {
   background: linear-gradient(180deg, var(--dark), #120a04, var(--dark));
 }
-.reviews-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+.reviews-scroll-note {
+  color: var(--orange);
+  font-size: 0.78rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: -1.6rem 0 1.2rem;
+}
+.reviews-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.6rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--orange) transparent;
+}
+.reviews-row {
+  display: flex;
   gap: 1.2rem;
+  min-width: max-content;
 }
 .review-card {
+  width: 320px;
+  flex: 0 0 auto;
   background: var(--glass);
   border: 1px solid var(--orange-border);
   border-radius: 3px;
