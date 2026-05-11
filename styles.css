@@ -379,21 +379,32 @@ section { padding: 5rem 3rem; }
   color: var(--text);
   font-size: 0.86rem;
   line-height: 1.7;
+  margin-bottom: 0.7rem;
+}
+.review-case {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
   margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .review-name {
   font-family: 'Roboto', sans-serif;
   font-size: 0.95rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 0.28rem;
+  margin: 0.75rem 0 0.2rem;
+  line-height: 1.2;
 }
 .review-role {
   color: var(--muted);
   font-size: 0.75rem;
   letter-spacing: 1px;
   text-transform: uppercase;
+  margin-bottom: 0.2rem;
 }
+
 
 /* ── Industries ── */
 .industries { background: linear-gradient(135deg, #120a04, var(--dark)); }
